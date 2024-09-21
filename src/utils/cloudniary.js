@@ -31,7 +31,7 @@ try {
  const response=  await cloudinary.uploader.upload(localFilePath,{
     resource_type:"auto"
 })
-// console.log("response images",response);
+console.log("response images",response)
 
 // file has been uploaded succesfully    
 console.log("file is uploaded on clodinary",response.url);

@@ -1,0 +1,110 @@
+// import mongoose from "mongoose"
+import { Video } from "../models/video.model.js"
+import { Subscription } from "../models/Subscription.model.js"
+import { Like } from "../models/like.model.js"
+import { ApiError } from "../utils/Apierror.js"
+import { Apiresponse } from "../utils/Apiresponse.js"
+import { asyncHandler } from "../utils/asynchandler.js"
+
+
+
+const getChannelStats = asyncHandler(async (req, res) => {
+
+    // TODO: Get the channel stats like total video views, total subscribers, total videos, total likes etc.
+
+    const user = req.user?._id;
+    console.log("user", user);
+    if (!user) throw new ApiError(400, "userid not found"
+    )
+    const videos = await Video.find({
+        owner: user
+    })
+
+    if (!videos) throw new ApiError(400, "videos not found"
+    )
+
+    let views = 0;
+    videos.map((video) => {
+        views = views + video.views
+    })
+    const Subscriptiondocument = await Subscription.find({
+        channel: user
+    })
+
+    if (!subscribersDocuments) {
+        throw new ApiError(500, "Error while fetching subscriber documents");
+    }
+
+    let subscribers = subscribersDocuments.length;
+    let numberOfVideos = videos.length;
+    let numberOfLikes = 0;
+    let numberOfComments = 0;
+
+    videos.map(async (v) => {
+        let likes = await Like.find({
+            video: v._id
+        })
+        if (!likes) {
+            throw new ApiError(400, "likes not found");
+        }
+
+        let comments = await Comment.find({
+            video: v._id
+        })
+
+        if (!comments) {
+            throw new ApiError(500, "Error while fetching comments");
+        }
+
+        numberOfComments = numberOfComments + comments.length;
+        numberOfLikes = numberOfLikes + likes.length
+    })
+    return res.status(200)
+        .json(
+            new Apiresponse(
+                200,
+                {
+                    views: views,
+                    subscribers: subscribers,
+                    numberOfVideos: numberOfVideos,
+                    numberOfLikes: numberOfLikes,
+                    numberOfComments: numberOfComments
+                },
+                "Dashboard data fetched succesfully"
+            )
+        )
+
+
+
+
+})
+
+
+const getChannelVideos = asyncHandler(async (req, res) => {
+    // TODO: Get all the videos uploaded by the channel
+    const user = req.user?._id;
+    console.log("user", user);
+    if (!user) throw new ApiError(400, "userid not found"
+    )
+
+    const videos = await Video.find({
+        owner: user
+    })
+
+    if (!videos) throw new ApiError(400, "videos not found"
+    )
+    return res.status(200)
+        .json(
+            new Apiresponse(
+                200,
+                videos,
+                "Videos fetched successfully"
+            )
+        )
+
+})
+
+export {
+    getChannelStats,
+    getChannelVideos
+}

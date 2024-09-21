@@ -13,6 +13,7 @@ import jwt from "jsonwebtoken"
  
   const user =await User.findById(decodedtoken?._id).select(
      "-password -refreshtoken")
+ console.log("authenticated");
  
      if(!user){
          throw new ApiError(404,"invalid access token")

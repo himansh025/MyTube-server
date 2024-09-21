@@ -17,7 +17,6 @@
 // }
 // console.log(MONGO_URL,db,"url and db done");
 
-
 // mongoose
 //   .connect(`${MONGO_URL}/${db}`)
 //   .then(() => {
@@ -42,10 +41,7 @@
 //     console.log("error agya hai", error);
 //   }
 // };
-
 // connectDB();
-
-
 
 import dotenv from 'dotenv';
 import connectDB from './DB/index.js';
@@ -55,6 +51,7 @@ import  app  from './app.js';
 dotenv.config({
     path: './.env',
 });
+
 
 // Connect to the database
 connectDB()

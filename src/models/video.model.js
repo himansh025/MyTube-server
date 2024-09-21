@@ -1,6 +1,7 @@
 import mongoose, { Schema } from "mongoose";
 import mongooseAggregatePaginate from "mongoose-aggregate-paginate-v2";
-// mongooseaggregate is used to plugin
+// mongooseaggregate is used to plugin 
+// it is also used so that all the videos not given to user according to the page  or help to give videos to user  from where to the target or limit
 const videoSchema = new mongoose.Schema(
   {
     videofile: {
@@ -28,7 +29,8 @@ const videoSchema = new mongoose.Schema(
       required: true,
     },
     owner: {
-      type: Number,
+      type: mongoose.Schema.Types.ObjectId,
+      ref:"User",
       required: true,
     },
     ispublished: {

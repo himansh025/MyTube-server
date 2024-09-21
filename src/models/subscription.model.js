@@ -1,6 +1,6 @@
-import mongoose,{ Schema, schema} from 'mongoose'
+import{ mongoose, Schema} from 'mongoose'
 
-const SubsreiptionModel= new schema({
+const SubscriptionModel= new Schema({
 subscriber:{
     type: Schema.Types.ObjectId,
     // who is subscriber
@@ -13,4 +13,4 @@ channel:{
 }
 },{timestamps: true})
 
-export const SUBSCRIPTION = mongoose.model("subscription",SubsreiptionModel) 
+export const Subscription = mongoose.model("Subscription",SubscriptionModel) 
