@@ -4,8 +4,8 @@ import { addComment, deleteComment, getvideoComments, updateComment } from "../c
 
 const route= Router()
 route.use(verifyjwt)
-route.get("/allcomments",getvideoComments)
-route.post("/addcomment",addComment).delete("/deltecomment",deleteComment).patch("/updatecomment",updateComment)
+route.get("/allcomments/:videoid",getvideoComments)
+route.post("/addcomment/:commentid",addComment).delete("/deltecomment",deleteComment).patch("/updatecomment",updateComment)
 
 
 export default route

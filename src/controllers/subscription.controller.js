@@ -84,9 +84,11 @@ const getUserChannelSubscribers = asyncHandler(async (req, res) => {
 
 const getSubscribedChannels = asyncHandler(async (req, res) => {
     const { subscriberId } = req.params; // subscriberId is the user's ID
+    console.log("susbscriber id",subscriberId);
     
     // Validate that a user ID (subscriberId) is provided
     if (!subscriberId) throw new ApiError(400, "User ID is required");
+    
   
     // Find all subscriptions where the user (subscriber) has subscribed to channels
     const channels = await Subscription.find({ 

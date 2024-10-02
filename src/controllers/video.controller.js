@@ -45,8 +45,11 @@ const getAllVideos = asyncHandler(async (req, res) => {
     // Fetch total count for pagination purposes
     const totalVideos = await Video.countDocuments(filter);
   
+// console.log(totalVideos,"total");
+
+
     res.status(200).json(new Apiresponse(200, {
-      user:req.user.username,
+      user: userId?userId:null,
       docs: videos,
       total: totalVideos,
       page: page,
@@ -54,7 +57,6 @@ const getAllVideos = asyncHandler(async (req, res) => {
       totalPages: Math.ceil(totalVideos / limit),
     }, "Fetched videos successfully"));
   });
-  
 
 const publishAVideo = asyncHandler(async (req, res) => {
     // TODO: get video, upload to cloudinary, create video
@@ -116,13 +118,14 @@ console.log(title,description,"agaya");
 
 const getVideoById = asyncHandler(async (req, res) => {
     const { videoId } = req.params
+    // console.log("videoid for 1 v in backend",videoId);
     
     //TODO: get video by id
     if (!isValidObjectId(videoId)) {
         throw new ApiError(500, "invalid video id")
     }
     const video = await Video.findById(videoId)
-    console.log("video aagyi", video);
+    // console.log("video aagyi", video);
 
     if (!video) {
         throw new ApiError(500, "video not found by id")

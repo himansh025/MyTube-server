@@ -372,26 +372,25 @@ const updatecoverimage = asyncHandler(async (req, res) => {
 }
 )
 
-// const { ObjectId } = mongoose.Types;
- const getUserChannelsdetails = asyncHandler(async (req, res) => {
-  const  {username}  = req.params
-  console.log("User ID for channel details:", username);
+// const mongoose = require('mongoose'); // Ensure mongoose is imported
+const getUserChannelsdetails = asyncHandler(async (req, res) => {
+  const { userid } = req.params;
   
-  // Validate if userId is a valid ObjectId
-  if (!username) {
-    // console.log("not found userid");
-    throw new ApiError(500,"username not get") }
-  // console.log("normal",userId);
-// console.log("string",userId.toString());
+  // Log user ID for debugging
+  console.log("User ID for channel details:", userid);
 
+  // Validate if the user ID is a valid ObjectId
+  if (!isValidObjectId(userid)) {
+    throw new ApiError(400, "Invalid User ID");
+  }
 
   try {
     const channel = await User.aggregate([
       {
         $match: {
-          username:  username?.toLowerCase() // Ensure userId is converted to string and passed correctly
-          }
-        },
+          _id: new mongoose.Types.ObjectId(userid)  // Ensure the ID is treated as ObjectId
+        }
+      },
       {
         $lookup: {
           from: "subscriptions",
@@ -414,7 +413,9 @@ const updatecoverimage = asyncHandler(async (req, res) => {
           subscribedtocount: { $size: "$subscribed_to" },
           is_Subscribed: {
             $cond: {
-              if: { $in: [ username, "$subscribers.subscriber"] },
+              if: {
+                $in: [ new mongoose.Types.ObjectId(userid), "$subscribers.subscriber" ] // Check if the user is in the subscribers list
+              },
               then: true,
               else: false
             }
@@ -434,10 +435,12 @@ const updatecoverimage = asyncHandler(async (req, res) => {
       }
     ]);
 
+    // If no channel is found
     if (!channel.length) {
       throw new ApiError(404, "Channel details not found");
     }
 
+    // Send response
     res.status(200).json(new Apiresponse(200, channel[0], "User channel fetched successfully"));
   } catch (error) {
     console.error("Error fetching user channel details:", error);
@@ -495,4 +498,88 @@ res
 
 })
 
-export { registeruser, loginuser, refreshaccesstoken, logoutuser, passwordchange, getcurrentuser, updateaccountdetails, updatecoverimage, updatravatarimage,getUserChannelsdetails,getwatchhistory }
+const getUserChannelsdetailsbyusername = asyncHandler(async (req, res) => {
+  const { username } = req.params;
+  console.log("User ID or username for channel details:", username);
+
+  // Validate if username or userId is provided
+  if (!username) {
+    throw new ApiError(500, "Username or UserID not provided");
+  }
+
+  // Determine if the provided identifier is a valid ObjectId or a username
+  let matchCriteria;
+  if (mongoose.Types.ObjectId.isValid(username) && username.length === 24) {
+    // It's a valid ObjectId, match by _id
+    matchCriteria = { _id: new mongoose.Types.ObjectId(username) };
+  } else {
+    // Otherwise, match by username
+    matchCriteria = { username: username.toLowerCase() };
+  }
+
+  try {
+    const channel = await User.aggregate([
+      {
+        $match: matchCriteria // Match based on ObjectId or username
+      },
+      {
+        $lookup: {
+          from: "subscriptions",
+          localField: "_id",
+          foreignField: "channel",
+          as: "subscribers"
+        }
+      },
+      {
+        $lookup: {
+          from: "subscriptions",
+          localField: "_id",
+          foreignField: "subscriber",
+          as: "subscribed_to"
+        }
+      },
+      {
+        $addFields: {
+          subscriberscount: { $size: "$subscribers" },
+          subscribedtocount: { $size: "$subscribed_to" },
+          is_Subscribed: {
+            $cond: {
+              if: { $in: [new mongoose.Types.ObjectId(req.user._id), "$subscribers.subscriber"] }, // Checking if the user is subscribed
+              then: true,
+              else: false
+            }
+          }
+        }
+      },
+      {
+        $project: {
+          fullname: 1,
+          username: 1,
+          subscriberscount: 1,
+          subscribedtocount: 1,
+          is_Subscribed: 1,
+          avatar: 1,
+          coverimage: 1
+        }
+      }
+    ]);
+
+    if (!channel.length) {
+      throw new ApiError(404, "Channel details not found");
+    }
+
+    res.status(200).json(new Apiresponse(200, channel[0], "User channel fetched successfully"));
+  } catch (error) {
+    console.error("Error fetching user channel details:", error);
+    throw new ApiError(500, "Internal Server Error");
+  }
+});
+
+
+
+
+
+
+
+
+export { registeruser, loginuser, refreshaccesstoken, logoutuser, passwordchange, getcurrentuser, updateaccountdetails, updatecoverimage, updatravatarimage,getUserChannelsdetails,getwatchhistory,getUserChannelsdetailsbyusername }
