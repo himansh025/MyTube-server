@@ -5,7 +5,7 @@ import { Like } from "../models/like.model.js"
 import { ApiError } from "../utils/Apierror.js"
 import { Apiresponse } from "../utils/Apiresponse.js"
 import { asyncHandler } from "../utils/asynchandler.js"
-
+import { Comment } from "../models/comment.model.js"
 
 
 const getChannelStats = asyncHandler(async (req, res) => {
@@ -13,7 +13,9 @@ const getChannelStats = asyncHandler(async (req, res) => {
     // TODO: Get the channel stats like total video views, total subscribers, total videos, total likes etc.
 
     const user = req.user?._id;
-    console.log("user", user);
+    // console.log("hellomu",user);
+    
+    // console.log("user", user);
     if (!user) throw new ApiError(400, "userid not found"
     )
     const videos = await Video.find({
@@ -27,7 +29,7 @@ const getChannelStats = asyncHandler(async (req, res) => {
     videos.map((video) => {
         views = views + video.views
     })
-    const Subscriptiondocument = await Subscription.find({
+    const subscribersDocuments = await Subscription.find({
         channel: user
     })
 

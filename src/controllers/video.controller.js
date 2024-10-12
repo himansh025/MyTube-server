@@ -90,20 +90,23 @@ console.log(title,description,"agaya");
     const videos =await uploadOnCloudinary(videofile)
     console.log("upload videoUrl url from clodinary", videos);
 
-    console.log("hi",req.user?._id);
     
+    const owner = await User.findById(req.user?._id);
+    if(!owner){
+        throw new ApiError(400 , "User authentication is required");
+    }
 
-
+    console.log("owner xhek vd",owner);
+    
 
     const video = await Video.create({
         title,
         description,
         videofile: videos.url,
         thumbnail: thumbnails.url,
-        // owner:req.user?._id,
-        owner: req.user?._id,
-        duration:videos.duration,
-        views:"0",
+        owner: owner._id,
+        duration:videos.duration
+       
     })
  video.save()
  console.log('video document',video);
@@ -219,6 +222,42 @@ const togglePublishStatus = asyncHandler(async (req, res) => {
 json(new Apiresponse( 200," updated"))
 
 })
+const incrementView = asyncHandler(async (req, res) => {
+  const { videoId } = req.params;
+
+  if (!videoId) {
+    throw new ApiError(400, "Video ID is required");
+  }
+
+  const video = await Video.findById(videoId);
+  if (!video) {
+    throw new ApiError(400, "Video not found");
+  }
+
+  console.log("Video to increment views:", video);
+
+  // Increment the views
+  video.views += 1;
+
+  try {
+    // Save the updated video
+    const updatedVideo = await video.save();
+    console.log("After saving:", updatedVideo);
+
+    return res.status(200).json(
+      new Apiresponse(
+        200,
+        updatedVideo,
+        "View incremented successfully"
+      )
+    );
+  } catch (error) {
+    console.error("Error saving video:", error);
+    throw new ApiError(500, "Failed to increment views");
+  }
+});
+
+
 
 export {
     getAllVideos,
@@ -226,5 +265,6 @@ export {
     getVideoById,
     updateVideo,
     deleteVideo,
-    togglePublishStatus
+    togglePublishStatus,
+    incrementView
 }

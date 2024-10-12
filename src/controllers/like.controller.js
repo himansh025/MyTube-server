@@ -1,7 +1,7 @@
 
 import { Like } from '../models/like.model.js';
 // import { User } from '../models/user.model.js'
-import { Comment } from '../models/comment.model.js'
+// import { Comment } from '../models/comment.model.js'
 import { asyncHandler } from '../utils/asynchandler.js'
 import { ApiError } from '../utils/Apierror.js';
 import { Apiresponse } from '../utils/Apiresponse.js';
@@ -25,23 +25,22 @@ const Liketoggle = asyncHandler(async (req, res) => {
         });
 
         let response = null;
+        console.log("existing like",existingLike);
+        
 
-        if (!existingLike) {
+        if (existingLike) {
+            // Remove the like if it already exists
+            response = await Like.deleteOne({_id:existingLike._id});
+            // await response.save();
+            console.log("Like removed:", response);
+        } else {
             // Create a new like if it doesn't exist
             response = await Like.create({
                 video: videoId,
-                likedBy: userId,
-                isLiked:true
+                likedBy: userId
             });
+            await response.save();
             console.log("Like created:", response);
-        } else {
-            // Remove the like if it already exists
-            response = await Like.deleteOne({
-                video: videoId,
-                likedBy: userId,
-                isLiked:false
-            });
-            console.log("Like removed:", response);
         }
 
         res.status(200).json(new Apiresponse(200, response, "Successfully toggled like for the video"));
@@ -178,44 +177,29 @@ const getLikesOfVideoById = asyncHandler(async (req, res) => {
       throw new ApiError(400, "Invalid video ID");
     }
   
-
-    const likeCount = await Like.countDocuments({
-        video: videoId,
-        isLiked: true,
+    const getvideolike = await Like.find({
+        video: videoId
     });
-
-    // Count dislikes (where isLiked is false)
-    const dislikeCount = await Like.countDocuments({
-        video: videoId,
-        isLiked: false,
-    });
-
-    // If no like or dislike documents are found for the video, handle the case
-    if (likeCount === 0 && dislikeCount === 0) {
-        return res.status(200).json(
-            new Apiresponse(200, { likeCount: 0, dislikeCount: 0 }, "No likes or dislikes for this video yet")
-        );
-    }
-
-    // Query the database to get the likes for the given video ID
-    const getvideolike = await Like.findOne({
-        video: videoId,
-    }); // Pass videoId directly
-    console.log("check b1", getvideolike);
+    
+    console.log("check backend get vidoe like", getvideolike);
+    
+    // Calculate the length of the result (number of likes for the video)
+    // const countlike = getLikedVideos.length;
+    
+    // console.log("Like count:",countlike );
     
 
-    if (!getvideolike) {
-      return res.status(200).json(
-        new Apiresponse(200,{dislikeCount,likeCount }, "No likes for this video yet")
-      );
-    }
-    console.log("uj",getvideolike);
-    // let dislikeCount= getLikedVideos.length; 
-    // If the video is found, respond with the like count
+ 
+    // const getvideolike = await Like.countDocuments({
+    //     video: videoId,
+    // });
+    
+    // console.log("Like count:", likeCount);
+    
     return res.status(200).json(
-      new Apiresponse(200, getvideolike,{likeCount,dislikeCount}, "Likes retrieved successfully")
-    );
-  });
+      new Apiresponse(200,  getvideolike , "Likes retrieved successfully")
+    )})
+    
   
 
 const getLikesOfCommentById = asyncHandler (async (req,res) =>{

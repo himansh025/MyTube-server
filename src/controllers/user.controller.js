@@ -137,19 +137,15 @@ console.log(fullname,username);
 });
 
 const loginuser = asyncHandler(async (req, res) => {
-  const { username, email, password } = req.body;
-  console.log(username,email,password);
-  
-  if(!username || !email){
+  const { username, password, } = req.body;
+  if(!username){
     throw new ApiError(400, "username or email is required")
   }
-  console.log(email, username);
 
   const user = await User.findOne({
-    $or: [{ email},{ username }]
+    $or: [{ username }]
   })
 
-  console.log(user);
   if (!user) {
     throw new ApiError(404, "user not found")
   }
@@ -158,7 +154,6 @@ const loginuser = asyncHandler(async (req, res) => {
   const loginassword = user.password
   if (user) {
     passwordverify = await bcrypt.compare(password, loginassword)
-    console.log("password is right ", passwordverify);
   }
 
   if (passwordverify) {
@@ -166,10 +161,10 @@ const loginuser = asyncHandler(async (req, res) => {
   }
 
   const { accesstoken, refreshtoken } = await GenerateAccessandRefreshtoken(user._id)
-  console.log("accesstoken refreshtoken", accesstoken, refreshtoken);
+  // console.log("accesstoken refreshtoken", accesstoken, refreshtoken);
 
   const loggedinuser = await User.findById(user._id).select("-password -refreshtoken")
-  console.log("loggedin user", loggedinuser);
+  // console.log("loggedin user", loggedinuser);
 
   // only modify by the server not the client
   const options = {
@@ -372,23 +367,20 @@ const updatecoverimage = asyncHandler(async (req, res) => {
 }
 )
 
-// const mongoose = require('mongoose'); // Ensure mongoose is imported
+
 const getUserChannelsdetails = asyncHandler(async (req, res) => {
-  const { userid } = req.params;
-  
-  // Log user ID for debugging
-  console.log("User ID for channel details:", userid);
+  const { username } = req.params;
+  console.log("User ID for channel details:", username);
 
-  // Validate if the user ID is a valid ObjectId
-  if (!isValidObjectId(userid)) {
-    throw new ApiError(400, "Invalid User ID");
-  }
+  if (!username?.trim()) {
+    throw new ApiError(400, "username is missing")
+}
 
-  try {
+
     const channel = await User.aggregate([
       {
         $match: {
-          _id: new mongoose.Types.ObjectId(userid)  // Ensure the ID is treated as ObjectId
+          username:username?.toLowerCase()
         }
       },
       {
@@ -414,7 +406,7 @@ const getUserChannelsdetails = asyncHandler(async (req, res) => {
           is_Subscribed: {
             $cond: {
               if: {
-                $in: [ new mongoose.Types.ObjectId(userid), "$subscribers.subscriber" ] // Check if the user is in the subscribers list
+                $in: [req.user?._id, "$subscribers.subscriber"] // Check if the user is in the subscribers list
               },
               then: true,
               else: false
@@ -430,29 +422,28 @@ const getUserChannelsdetails = asyncHandler(async (req, res) => {
           subscribedtocount: 1,
           is_Subscribed: 1,
           avatar: 1,
-          coverimage: 1
+          coverimage: 1,
+          email: 1
         }
       }
     ]);
 
     // If no channel is found
-    if (!channel.length) {
+    if (!channel?.length) {
       throw new ApiError(404, "Channel details not found");
     }
 
     // Send response
     res.status(200).json(new Apiresponse(200, channel[0], "User channel fetched successfully"));
-  } catch (error) {
-    console.error("Error fetching user channel details:", error);
-    throw new ApiError(500, "Internal Server Error");
-  }
+  
 });
+
 
 const getwatchhistory= asyncHandler(async(req,res)=>{
   const user = User.aggregate([
     {
       $match: {
-       _id:  mongoose.Types.ObjectId( req.user._id)
+       _id: new mongoose.Types.ObjectId( req.user._id)
            
       }
     },{

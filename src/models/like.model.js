@@ -1,5 +1,5 @@
 import mongoose, { Schema } from "mongoose";
-import mongooseAggregatePaginate from "mongoose-aggregate-paginate-v2"; // Mongoose aggregate pagination plugin
+// import mongooseAggregatePaginate from "mongoose-aggregate-paginate-v2"; // Mongoose aggregate pagination plugin
 
 const LikeSchema = new mongoose.Schema(
     {
@@ -29,15 +29,12 @@ const LikeSchema = new mongoose.Schema(
             ref: "User",
             required: true,
         },
-        isLiked: {  // New field to differentiate between likes and dislikes
-            type: Boolean,
-            required: true, // true for like, false for dislike
-        },
+  
     },
     { timestamps: true }
 );
 
 // Add pagination capabilities to the Like model
-LikeSchema.plugin(mongooseAggregatePaginate);
+// LikeSchema.plugin(mongooseAggregatePaginate);
 
 export const Like = mongoose.model("Like", LikeSchema);
