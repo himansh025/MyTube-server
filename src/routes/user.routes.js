@@ -12,6 +12,7 @@
     getwatchhistory,
     getUserChannelsdetails,
     getUserChannelsdetailsbyusername,
+    userbyid
     // userdetialsforchannel
   } from "../controllers/user.controller.js";
   import { upload } from '../middlewares/multer.middleware.js';
@@ -35,6 +36,7 @@
   router.patch("/update-avatar", verifyjwt, upload.single("avatar"), updatravatarimage);
   router.patch("/update-cover", verifyjwt, upload.single("coverimage"), updatecoverimage);
   router.get("/c/:username", verifyjwt, getUserChannelsdetails);
+  router.get("/m/:userId", verifyjwt, userbyid);
   router.get("/history", verifyjwt, getwatchhistory); // Fixed here
  
  

@@ -368,6 +368,21 @@ const updatecoverimage = asyncHandler(async (req, res) => {
 )
 
 
+const userbyid=asyncHandler(async(req,res)=>{
+  const {userId}= req.params;
+  console.log("check c u",userId);
+  
+  if(!isValidObjectId(userId)){
+    throw new ApiError("not found")
+
+  }
+const user= await User.findById(userId)
+console.log("finaaly singleuser only",user);
+
+res.json(200,new Apiresponse(200,user,"success"))
+
+})
+
 const getUserChannelsdetails = asyncHandler(async (req, res) => {
   const { username } = req.params;
   console.log("User ID for channel details:", username);
@@ -573,4 +588,4 @@ const getUserChannelsdetailsbyusername = asyncHandler(async (req, res) => {
 
 
 
-export { registeruser, loginuser, refreshaccesstoken, logoutuser, passwordchange, getcurrentuser, updateaccountdetails, updatecoverimage, updatravatarimage,getUserChannelsdetails,getwatchhistory,getUserChannelsdetailsbyusername }
+export { registeruser, loginuser, refreshaccesstoken, logoutuser, passwordchange, getcurrentuser, updateaccountdetails, updatecoverimage, updatravatarimage,getUserChannelsdetails,getwatchhistory,getUserChannelsdetailsbyusername,userbyid }

@@ -1,5 +1,5 @@
 import  {isValidObjectId } from "mongoose"
-// import { User } from "../models/user.model.js"
+import { User } from "../models/user.model.js"
 import { Video } from '../models/video.model.js'
 import { ApiError } from "../utils/Apierror.js"
 import { asyncHandler } from "../utils/asynchandler.js"
@@ -47,6 +47,8 @@ const getAllVideos = asyncHandler(async (req, res) => {
   
 // console.log(totalVideos,"total");
 
+// const getvideonownername= 
+
 
     res.status(200).json(new Apiresponse(200, {
       user: userId?userId:null,
@@ -61,6 +63,7 @@ const getAllVideos = asyncHandler(async (req, res) => {
 const publishAVideo = asyncHandler(async (req, res) => {
     // TODO: get video, upload to cloudinary, create video
     console.log("files",req.files);
+    // console.log(req.user._id);
     
     const { title, description } = req.body
     if (!(title && description)) {
@@ -96,7 +99,7 @@ console.log(title,description,"agaya");
         throw new ApiError(400 , "User authentication is required");
     }
 
-    console.log("owner xhek vd",owner);
+    console.log("owner  vd",owner);
     
 
     const video = await Video.create({
@@ -104,10 +107,13 @@ console.log(title,description,"agaya");
         description,
         videofile: videos.url,
         thumbnail: thumbnails.url,
+        views:0,
         owner: owner._id,
         duration:videos.duration
        
     })
+    console.log("video created",video);
+    
  video.save()
  console.log('video document',video);
  

@@ -33,6 +33,10 @@ const videoSchema = new mongoose.Schema(
       ref:"User",
       required: true,
     },
+    // name: {
+    //   type: String,
+    //   required: true,
+    // },
     ispublished: {
       type: Schema.Types.ObjectId,
       ref: "User",
