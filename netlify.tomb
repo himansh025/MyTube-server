@@ -1,0 +1,8 @@
+[build]
+  publish = "dist" # This is where the frontend build will go (if applicable)
+  functions = "functions" # The folder for serverless functions
+
+[[redirects]]
+  from = "/api/v1/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
