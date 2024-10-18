@@ -1,6 +1,6 @@
-import dotenv from 'dotenv';
 import connectDB from './DB/index.js';
 import app from './app.js';
+import dotenv from 'dotenv';
 
 // Load environment variables from .env
 dotenv.config({
@@ -15,3 +15,4 @@ connectDB().then(() => {
 }).catch((err) => {
     console.log("Mongodb connection failed: ", err);
 });
+ 
