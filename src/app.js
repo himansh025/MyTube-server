@@ -44,7 +44,7 @@ app.use("/api/v1/videos", videoRouter);
 app.use("/api/v1/comments", commentRouter);
 app.use("/api/v1/tweet", tweetRouter)
 // app.use("/api/v1/subs", subscriptionRouter);
-app.use("/api/v1/dashboard", dashboardRouter);
+// app.use("/api/v1/dashboard", dashboardRouter);
 app.use("/api/v1/playlist", playlistRouter);
 
 export default app;
