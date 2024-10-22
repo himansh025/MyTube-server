@@ -2,15 +2,17 @@ import mongoose from "mongoose";
 import dotenv from 'dotenv';
 
 dotenv.config({
-    path: './.env',
+    path: './.env', // Ensure this path is correct, relative to the file location.
 });
 
 const mb = process.env.MONGODB_URL;
 
 const connectDB = async () => {
     try {
-        // console.log("Connecting to MongoDB with URI: ", mb);
-        const connectionInstance = await mongoose.connect(mb);
+        const connectionInstance = await mongoose.connect(mb, {
+            useNewUrlParser: true, // Add these options to avoid deprecation warnings
+            useUnifiedTopology: true
+        });
         console.log(`MongoDB connected: ${connectionInstance.connection.host}`);
     } catch (error) {
         console.error("Error connecting to MongoDB", error);
