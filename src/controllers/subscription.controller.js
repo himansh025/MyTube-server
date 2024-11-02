@@ -1,7 +1,7 @@
 
 // import  {isValidObjectId} from "mongoose"
 import { User } from "../models/user.model.js"
-import  Subscription  from "../models/Subscription.model.js"
+import  {Subscription}  from "../models/subscription.model.js"
 import { ApiError } from "../utils/Apierror.js"
 import { Apiresponse } from "../utils/Apiresponse.js"
 import { asyncHandler } from "../utils/asynchandler.js"
