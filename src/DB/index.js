@@ -9,10 +9,7 @@ const mb = process.env.MONGODB_URL;
 
 const connectDB = async () => {
     try {
-        const connectionInstance = await mongoose.connect(mb, {
-            useNewUrlParser: true, // Add these options to avoid deprecation warnings
-            useUnifiedTopology: true
-        });
+        const connectionInstance = await mongoose.connect(mb);
         console.log(`MongoDB connected: ${connectionInstance.connection.host}`);
     } catch (error) {
         console.error("Error connecting to MongoDB", error);

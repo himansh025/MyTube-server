@@ -25,13 +25,13 @@ import fs from 'fs'
 
 const uploadOnCloudinary= async (localFilePath)=>{
 try {
-    console.log('localpath agya',localFilePath);
+    // console.log('localpath agya',localFilePath);
     if(!localFilePath) return null
     // upload the file on cloudinary
  const response=  await cloudinary.uploader.upload(localFilePath,{
     resource_type:"auto"
 })
-console.log("response images",response)
+// console.log("response images",response)
 
 // file has been uploaded succesfully    
 console.log("file is uploaded on clodinary",response.url);

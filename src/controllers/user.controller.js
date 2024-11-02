@@ -5,7 +5,9 @@ import { uploadOnCloudinary } from '../utils/cloudniary.js'
 import { Apiresponse } from '../utils/Apiresponse.js'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
-import mongoose, { isValidObjectId, set } from "mongoose";
+import mongoose, { isValidObjectId } from "mongoose";
+import {Video} from '../models/video.model.js'
+// import Video from "../../../clientside/src/components/Video.jsx";
 // import mongooseAggregatePaginate from "mongoose-aggregate-paginate-v2";
 // import { UploadStream } from "cloudinary";
 
@@ -285,22 +287,26 @@ console.log("data",data);
 })
 
 const updateaccountdetails = asyncHandler(async (req, res) => {
-  const { name, email } = req.body;
-  if (!name && !email) {
+  const { fullname, email } = req.body;
+  // console.log(req.body);
+  
+  if (!fullname && !email) {
     throw new ApiError(400, "name and email are required")
   }
 
-  const user = User.findByIdAndUpdate(
+  const user =await User.findByIdAndUpdate(
     req.user?._id,
     {
       $set: {
-        name,
+        fullname,
         email
       }
     },
     { new: true }
   ).select('-password')
-
+user.save()
+  console.log("check res",user);
+  
 
   res
     .status(200)
@@ -316,7 +322,9 @@ const updatravatarimage = asyncHandler(async (req, res) => {
   }
 
   const avatar = await uploadOnCloudinary(updateavatar)
-  if (avatar.url) {
+  // console.log("acatar check",avatar);
+  
+  if (!avatar.url) {
     throw new ApiError(500, "update avatar url missing")
   }
 
@@ -376,8 +384,9 @@ const userbyid=asyncHandler(async(req,res)=>{
     throw new ApiError("not found")
 
   }
-const user= await User.findById(userId)
-console.log("finaaly singleuser only",user);
+const user= await User.findById(userId).select("-password")
+
+// console.log("finaaly singleuser only",user);
 
 res.json(200,new Apiresponse(200,user,"success"))
 
@@ -503,30 +512,32 @@ res
 
 
 })
-
 const getUserChannelsdetailsbyusername = asyncHandler(async (req, res) => {
-  const { username } = req.params;
-  console.log("User ID or username for channel details:", username);
+  const { videoid } = req.params;
+  console.log("User ID or username for channel details:", videoid);
 
   // Validate if username or userId is provided
-  if (!username) {
+  if (!videoid) {
     throw new ApiError(500, "Username or UserID not provided");
   }
 
   // Determine if the provided identifier is a valid ObjectId or a username
-  let matchCriteria;
-  if (mongoose.Types.ObjectId.isValid(username) && username.length === 24) {
-    // It's a valid ObjectId, match by _id
-    matchCriteria = { _id: new mongoose.Types.ObjectId(username) };
-  } else {
-    // Otherwise, match by username
-    matchCriteria = { username: username.toLowerCase() };
-  }
+  // let matchCriteria;
+  // if (mongoose.Types.ObjectId.isValid(userid) && userid.length === 24) {
+  //   // It's a valid ObjectId, match by _id
+  //   matchCriteria = { _id: new mongoose.Types.ObjectId(userid) };
+  // } else {
+  //   // Otherwise, match by username
+  //   matchCriteria = { username: userid.toLowerCase() };
+  // }
+  // console.log("matchCriteria:", matchCriteria);
 
   try {
     const channel = await User.aggregate([
       {
-        $match: matchCriteria // Match based on ObjectId or username
+        $match:{ 
+          videoid
+        } // Use the entire matchCriteria object
       },
       {
         $lookup: {
@@ -550,7 +561,7 @@ const getUserChannelsdetailsbyusername = asyncHandler(async (req, res) => {
           subscribedtocount: { $size: "$subscribed_to" },
           is_Subscribed: {
             $cond: {
-              if: { $in: [new mongoose.Types.ObjectId(req.user._id), "$subscribers.subscriber"] }, // Checking if the user is subscribed
+              if: { $in: [req.user?._id, "$subscribers.subscriber"] },
               then: true,
               else: false
             }
@@ -580,11 +591,6 @@ const getUserChannelsdetailsbyusername = asyncHandler(async (req, res) => {
     throw new ApiError(500, "Internal Server Error");
   }
 });
-
-
-
-
-
 
 
 

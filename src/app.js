@@ -11,30 +11,29 @@ const app = express();
 if (process.env.NODE_ENV === 'production') {
   app.use(cors({
     origin: process.env.CORS_ORIGIN,
-    credentials: true,
-  }));
-} else {
-  app.use(cors());
-}
-
-app.use(express.json({ limit: "16kb" }));
-app.use(express.urlencoded({ extended: true, limit: "16kb" }));
-app.use(express.static("public"));
-app.use(cookieParser());
-
-// Test route
-// app.get("/hi", (req, res) => {
-//   console.log("running");
-//   res.send("Hi there!");
-// });
-
-import userRouter from './routes/user.routes.js';
-import commentRouter from './routes/comment.routes.js'
+    credentials: true, }));
+  } else {
+    app.use(cors());
+  }
+  
+  app.use(express.json({ limit: "16kb" }));
+  app.use(express.urlencoded({ extended: true, limit: "16kb" }));
+  app.use(express.static("public"));
+  app.use(cookieParser());
+  
+  // Test route
+  // app.get("/hi", (req, res) => {
+  //   console.log("running");
+  //   res.send("Hi there!");
+  // });
+  
+  import userRouter from './routes/user.routes.js';
+  import commentRouter from './routes/comment.routes.js'
 import videoRouter from './routes/video.routes.js'
 import likeRouter from './routes/like.routes.js'
 import tweetRouter from './routes/tweet.routes.js'
-// import subscriptionRouter from './routes/subscription.routes.js'
-// import dashboardRouter from './routes/dashboard.routes.js'
+import subscriptionRouter from './routes/subscription.routes.js'
+import dashboardRouter from './routes/dashboard.routes.js'
 import playlistRouter from './routes/playlist.routes.js'
 
 
@@ -43,9 +42,8 @@ app.use("/api/v1/likes", likeRouter);
 app.use("/api/v1/videos", videoRouter);
 app.use("/api/v1/comments", commentRouter);
 app.use("/api/v1/tweet", tweetRouter)
-// app.use("/api/v1/subs", subscriptionRouter);
-// app.use("/api/v1/dashboard", dashboardRouter);y
-
+app.use("/api/v1/subs", subscriptionRouter);
+app.use("/api/v1/dashboard", dashboardRouter);
 app.use("/api/v1/playlist", playlistRouter);
 
 export default app;

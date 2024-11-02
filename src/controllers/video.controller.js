@@ -7,58 +7,60 @@ import { uploadOnCloudinary } from "../utils/cloudniary.js"
 import { Apiresponse } from "../utils/Apiresponse.js"
 import { json } from "express"
 
-
 const getAllVideos = asyncHandler(async (req, res) => {
-    let { page, limit, query, sortBy, sortType, userId } = req.query;
-    
-    // Set defaults for pagination if not provided
-    page = page ? parseInt(page) : 1;
-    limit = limit ? parseInt(limit) : 10;
-  
-    const filter = {};
-    
-    // If a query is provided, use it to match video titles or descriptions
-    if (query) {
-      filter.$or = [
-        { title: { $regex: query, $options: "i" } },   // Case-insensitive search
-        { description: { $regex: query, $options: "i" } }
-      ];
-    }
-  
-    // If userId is provided, filter videos by userId (for user-specific videos)
-    if (userId && isValidObjectId(userId)) {
-      filter.owner = userId;
-    }
-  
-    // Sorting logic: if sortBy and sortType are provided
-    const sortOptions = {};
-    if (sortBy && sortType) {
-      sortOptions[sortBy] = sortType === "asc" ? 1 : -1;
-    }
-  
-    // Fetch videos based on filter, sort, and pagination options
+  let { page, limit, query, sortBy, sortType, userId } = req.query;
+
+  // Set defaults for pagination if not provided
+  page = page ? parseInt(page) : 1;
+  limit = limit ? parseInt(limit) : 10;
+
+  const filter = {};
+
+  // Search videos by title or description if query is provided
+  if (query) {
+    filter.$or = [
+      { title: { $regex: query, $options: "i" } },
+      { description: { $regex: query, $options: "i" } }
+    ];
+  }
+
+  // Filter by userId if provided and valid
+  if (userId && isValidObjectId(userId)) {
+    filter.owner = userId;
+  }
+
+  // Set sort options if sortBy and sortType are specified
+  const sortOptions = {};
+  if (sortBy && sortType) {
+    sortOptions[sortBy] = sortType === "asc" ? 1 : -1;
+  }
+
+  try {
+    // Fetch videos with applied filters, sort, and pagination
     const videos = await Video.find(filter)
       .sort(sortOptions)
       .skip((page - 1) * limit)
       .limit(limit);
-  
-    // Fetch total count for pagination purposes
+
+    // Fetch total count for pagination
     const totalVideos = await Video.countDocuments(filter);
-  
-// console.log(totalVideos,"total");
 
-// const getvideonownername= 
-
+    console.log("Total videos:", totalVideos);
 
     res.status(200).json(new Apiresponse(200, {
-      user: userId?userId:null,
+      user: userId || null,
       docs: videos,
       total: totalVideos,
-      page: page,
-      limit: limit,
+      page,
+      limit,
       totalPages: Math.ceil(totalVideos / limit),
     }, "Fetched videos successfully"));
-  });
+  } catch (error) {
+    console.error("Error fetching videos:", error);
+    res.status(500).json({ message: "Failed to fetch videos" });
+  }
+});
+
 
 const publishAVideo = asyncHandler(async (req, res) => {
     // TODO: get video, upload to cloudinary, create video
@@ -248,7 +250,7 @@ const incrementView = asyncHandler(async (req, res) => {
   try {
     // Save the updated video
     const updatedVideo = await video.save();
-    console.log("After saving:", updatedVideo);
+    // console.log("After saving:", updatedVideo);
 
     return res.status(200).json(
       new Apiresponse(

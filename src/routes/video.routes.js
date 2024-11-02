@@ -7,7 +7,9 @@ const  route= Router()
 
 // route.use()
 route.get("/getallvideos",getAllVideos)
+route.get("/getvideobyid/:videoId",getVideoById)
 
+route.post("/incrementView/:videoId",incrementView);
 route.use(verifyjwt);
 route.post("/addvideo", upload.fields([
     { name: "thumbnail", maxCount: 1 },
@@ -22,9 +24,7 @@ route.patch("/updatevideo/:videoId",upload.fields([
         "maxCount":1
         }
 ]),updateVideo)
-route.get("/getvideobyid/:videoId",getVideoById)
 route.delete("/deleteVideo/:videoId",deleteVideo)
-route.post("/incrementView/:videoId",incrementView);
 route.patch("/togglepublishstatus",togglePublishStatus)
 
 

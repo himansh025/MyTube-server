@@ -11,14 +11,15 @@ const toggleSubscription = asyncHandler(async (req, res) => {
     // TODO: toggle Subscription
     if(!channelId){
         throw new ApiError(400 , "Channel id is required");
-    }    
+    }
+    console.log("channelid backend",channelId);    
   // Find the channel by ID
 const Channel = await User.findById(channelId)
+console.log("channel",Channel);
 if (!Channel) {
     throw new ApiError(404, "Channel not found");
   }
 
-console.log("channel",Channel);
 
 // const subscribed= await User.findById({
 //     _id: req.user?._id,
@@ -31,10 +32,10 @@ console.log("channel",Channel);
     channel: Channel._id,
   });
 
-console.log(existingSubscription);
+console.log("existing user",existingSubscription);
 
 let subscriber;
-if(!existingSubscription){
+if(existingSubscription==null){
 subscriber = await Subscription.create({
     subscriber: req.user?._id,
     channel: Channel._id  
@@ -66,7 +67,7 @@ const getUserChannelSubscribers = asyncHandler(async (req, res) => {
 
   // Find subscribers for the given channel ID
 
-  const subscribers = await Subscription.find({ channel: channelId }).populate('subscriber', 'username email');
+  const subscribers = await Subscription.find({ channel: channelId }).populate('subscriber', 'username fullname email avatar');
 
   console.log("Subscribers list:", subscribers);
   console.log("Number of subscribers:", subscribers.length);

@@ -36,11 +36,11 @@
   router.patch("/update-avatar", verifyjwt, upload.single("avatar"), updatravatarimage);
   router.patch("/update-cover", verifyjwt, upload.single("coverimage"), updatecoverimage);
   router.get("/c/:username", verifyjwt, getUserChannelsdetails);
-  router.get("/m/:userId", verifyjwt, userbyid);
+  router.get("/m/:userId", userbyid);
   router.get("/history", verifyjwt, getwatchhistory); // Fixed here
  
  
   // router.get("/userdetails/:userid", verifyjwt, userdetialsforchannel);
-  router.get("/only/:username", verifyjwt, getUserChannelsdetailsbyusername);
+  router.get("/only/:videoid", verifyjwt, getUserChannelsdetailsbyusername);
 
   export default router;
