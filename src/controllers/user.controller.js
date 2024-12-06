@@ -6,7 +6,7 @@ import { Apiresponse } from '../utils/Apiresponse.js'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import mongoose, { isValidObjectId } from "mongoose";
-import {Video} from '../models/video.model.js'
+// import {Video} from '../models/video.model.js'
 // import Video from "../../../clientside/src/components/Video.jsx";
 // import mongooseAggregatePaginate from "mongoose-aggregate-paginate-v2";
 // import { UploadStream } from "cloudinary";
@@ -133,13 +133,15 @@ console.log(fullname,username);
 
   return res.status(201).json(
 
-    new Apiresponse(200, createduser, "user registered succesfully")
+    new Apiresponse( createduser, "user registered succesfully")
   )
 
 });
 
 const loginuser = asyncHandler(async (req, res) => {
   const { username, password, } = req.body;
+  console.log("username pass",username,password);
+  
   if(!username){
     throw new ApiError(400, "username or email is required")
   }
@@ -163,25 +165,26 @@ const loginuser = asyncHandler(async (req, res) => {
   }
 
   const { accesstoken, refreshtoken } = await GenerateAccessandRefreshtoken(user._id)
-  // console.log("accesstoken refreshtoken", accesstoken, refreshtoken);
+  console.log("accesstoken refreshtoken", accesstoken, refreshtoken);
 
   const loggedinuser = await User.findById(user._id).select("-password -refreshtoken")
-  // console.log("loggedin user", loggedinuser);
+  console.log("loggedin user", loggedinuser);
 
   // only modify by the server not the client
   const options = {
     httpOnly: true,
     secure: true,
   }
+
   return res
     .status(200)
     .cookie("accesstoken", accesstoken, options)
     .cookie("refreshtoken", refreshtoken, options)
     .json(
-      new Apiresponse(200,
-        {
-          user: loggedinuser, accesstoken, refreshtoken
-        }, "user logged in successfully"
+      new Apiresponse(
+        200,{
+          user: loggedinuser, accesstoken, refreshtoken}
+        ,"user logged in successfully"
       )
     )
 })

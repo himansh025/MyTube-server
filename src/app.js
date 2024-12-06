@@ -10,11 +10,16 @@ const app = express();
 
 if (process.env.NODE_ENV === 'production') {
   app.use(cors({
-    origin: process.env.CORS_ORIGIN,
-    credentials: true, }));
-  } else {
-    app.use(cors());
-  }
+    origin: process.env.CORS_ORIGIN, // Set this in your production .env file
+    credentials: true,
+  }));
+} else {
+  app.use(cors({
+    origin: 'http://localhost:5173', // Frontend URL for development
+    credentials: true,
+  }));
+}
+
   
   app.use(express.json({ limit: "16kb" }));
   app.use(express.urlencoded({ extended: true, limit: "16kb" }));

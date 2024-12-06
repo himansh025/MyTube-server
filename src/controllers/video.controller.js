@@ -5,10 +5,11 @@ import { ApiError } from "../utils/Apierror.js"
 import { asyncHandler } from "../utils/asynchandler.js"
 import { uploadOnCloudinary } from "../utils/cloudniary.js"
 import { Apiresponse } from "../utils/Apiresponse.js"
-import { json } from "express"
+
+
 
 const getAllVideos = asyncHandler(async (req, res) => {
-  let { page, limit, query, sortBy, sortType, userId } = req.query;
+  let { page, limit, query, sortBy, sortType, userId, filterByUser } = req.query;
 
   // Set defaults for pagination if not provided
   page = page ? parseInt(page) : 1;
@@ -24,8 +25,8 @@ const getAllVideos = asyncHandler(async (req, res) => {
     ];
   }
 
-  // Filter by userId if provided and valid
-  if (userId && isValidObjectId(userId)) {
+  // Filter by userId if provided, valid, and filterByUser is true
+  if (filterByUser === "true" && userId && isValidObjectId(userId)) {
     filter.owner = userId;
   }
 
@@ -48,7 +49,7 @@ const getAllVideos = asyncHandler(async (req, res) => {
     console.log("Total videos:", totalVideos);
 
     res.status(200).json(new Apiresponse(200, {
-      user: userId || null,
+      user: filterByUser === "true" ? userId : null,
       docs: videos,
       total: totalVideos,
       page,
@@ -60,7 +61,6 @@ const getAllVideos = asyncHandler(async (req, res) => {
     res.status(500).json({ message: "Failed to fetch videos" });
   }
 });
-
 
 const publishAVideo = asyncHandler(async (req, res) => {
     // TODO: get video, upload to cloudinary, create video
