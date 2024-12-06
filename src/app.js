@@ -9,28 +9,21 @@ const app = express();
 // Parse cookies
 
 // import cors from 'cors';
-
-const allowedOrigins = ['http://localhost:5173', 'https://merntube.netlify.app'];
+const allowedOrigins = [
+  'http://localhost:5173', // Local development frontend
+  'https://merntube.netlify.app', // Production frontend
+];
 
 app.use(cors({
-  origin: allowedOrigins, // Allow specific origins
-  credentials: true,      // Allow cookies or auth headers
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true, // Required to support cookies/auth headers
 }));
-
-
-// if (process.env.NODE_ENV === 'production') {
-//   app.use(cors({
-//     origin: process.env.CORS_ORIGIN, // Set this in your production .env file
-//     credentials: true,
-//   }));
-
-  
-// } else {
-//   app.use(cors({
-//     origin: 'http://localhost:5173', // Frontend URL for development
-//     credentials: true,
-//   }));
-// }
 
   
   app.use(express.json({ limit: "16kb" }));
