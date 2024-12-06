@@ -8,10 +8,15 @@ const app = express();
 // Serve static files
 // Parse cookies
 
+// import cors from 'cors';
+
+const allowedOrigins = ['http://localhost:5173', 'https://merntube.netlify.app'];
+
 app.use(cors({
-  origin: '*',
-  credentials: true,
+  origin: allowedOrigins, // Allow specific origins
+  credentials: true,      // Allow cookies or auth headers
 }));
+
 
 // if (process.env.NODE_ENV === 'production') {
 //   app.use(cors({
