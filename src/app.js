@@ -11,7 +11,7 @@ const app = express();
 // import cors from 'cors';
 const allowedOrigins = [
   'http://localhost:5173', // Local development frontend
-  'https://merntube.netlify.app', // Production frontend
+  'https://my-tube-client-42ao.vercel.app', // Production frontend
 ];
 
 app.use(cors({
