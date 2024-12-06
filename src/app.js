@@ -8,17 +8,24 @@ const app = express();
 // Serve static files
 // Parse cookies
 
-if (process.env.NODE_ENV === 'production') {
-  app.use(cors({
-    origin: process.env.CORS_ORIGIN, // Set this in your production .env file
-    credentials: true,
-  }));
-} else {
-  app.use(cors({
-    origin: 'http://localhost:5173', // Frontend URL for development
-    credentials: true,
-  }));
-}
+app.use(cors({
+  origin: '*',
+  credentials: true,
+}));
+
+// if (process.env.NODE_ENV === 'production') {
+//   app.use(cors({
+//     origin: process.env.CORS_ORIGIN, // Set this in your production .env file
+//     credentials: true,
+//   }));
+
+  
+// } else {
+//   app.use(cors({
+//     origin: 'http://localhost:5173', // Frontend URL for development
+//     credentials: true,
+//   }));
+// }
 
   
   app.use(express.json({ limit: "16kb" }));
