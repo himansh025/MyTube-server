@@ -7,7 +7,7 @@ import { isValidObjectId,mongoose } from 'mongoose';
 const getvideoComments = asyncHandler(async (req, res) => {
     const { videoid } = req.params;
     const { page = 1, limit = 10 } = req.query;
-// console.log("vid in backend for comment",videoid);
+console.log("vid in backend for comment",videoid);
 
     if (!isValidObjectId(videoid)) {
         return new ApiError(400, "Invalid video ID");
@@ -18,7 +18,7 @@ const getvideoComments = asyncHandler(async (req, res) => {
         .skip(skip)
         .limit(parseInt(limit))
         .exec();
-// console.log("comments",comments);
+console.log("comments",comments);
 
     // If no comments found
     if (comments.length === 0) {

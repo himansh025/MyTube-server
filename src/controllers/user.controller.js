@@ -391,7 +391,9 @@ const user= await User.findById(userId).select("-password")
 
 // console.log("finaaly singleuser only",user);
 
-res.json(200,new Apiresponse(200,user,"success"))
+res
+.status(200)
+.json(new Apiresponse(200, user, " successfully"))
 
 })
 
@@ -450,7 +452,8 @@ const getUserChannelsdetails = asyncHandler(async (req, res) => {
           is_Subscribed: 1,
           avatar: 1,
           coverimage: 1,
-          email: 1
+          email: 1,
+        
         }
       }
     ]);
