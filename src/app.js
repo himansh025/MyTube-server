@@ -11,7 +11,7 @@ const app = express();
 // import cors from 'cors';
 const allowedOrigins = [
   'http://localhost:5173', // Local development frontend
-  'https://mytube-himanshu.vercel.app/', // Production frontend
+  'https://mytube-himanshu.vercel.app', // Production frontend
 ];
 
 app.use(cors({
