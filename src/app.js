@@ -9,18 +9,14 @@ const app = express();
 // Parse cookies
 
 // import cors from 'cors';
-const allowedOrigins ="*";
+// const allowedOrigins ="*";
 
+// If you don’t need credentials (cookies/auth headers):
 app.use(cors({
-  origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-  credentials: true, // Required to support cookies/auth headers
+  origin: '*',
+  credentials: false,
 }));
+
 
   
   app.use(express.json({ limit: "16kb" }));
