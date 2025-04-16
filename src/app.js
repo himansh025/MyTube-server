@@ -9,10 +9,7 @@ const app = express();
 // Parse cookies
 
 // import cors from 'cors';
-const allowedOrigins = [
-  'http://localhost:5173', // Local development frontend
-  'https://mytube-himanshu.vercel.app', // Production frontend
-];
+const allowedOrigins ="*";
 
 app.use(cors({
   origin: (origin, callback) => {
