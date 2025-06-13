@@ -11,7 +11,7 @@ const getAllVideos = asyncHandler(async (req, res) => {
 
   // Set defaults for pagination if not provided
   page = page ? parseInt(page) : 1;
-  limit = limit ? parseInt(limit) : 10;
+  limit = limit ? parseInt(limit) : 20;
 
   const filter = {};
 

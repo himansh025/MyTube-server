@@ -3,19 +3,14 @@ import cors from 'cors';
 import cookieParser from "cookie-parser";
 const app = express();
 
-// Middleware configuration
-// Accept JSON and URL-encoded data
-// Serve static files
-// Parse cookies
 
-// import cors from 'cors';
-// const allowedOrigins ="*";
+const allowedOrigins = process.env.CORS_ORIGIN;
 
-// If you don’t need credentials (cookies/auth headers):
 app.use(cors({
-  origin: '*',
-  credentials: false,
+  origin: allowedOrigins,
+  credentials: true,
 }));
+
 
 
   
