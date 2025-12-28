@@ -6,6 +6,10 @@ const app = express();
 
 const allowedOrigins = process.env.CORS_ORIGIN;
 
+app.use("/api/health",async(req,res)=>{
+res.send("working fine)
+})
+
 app.use(cors({
   origin: allowedOrigins,
   credentials: true,
